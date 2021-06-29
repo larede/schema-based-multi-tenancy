@@ -1,0 +1,28 @@
+version: "3.6"
+
+services:
+  multitenancy:
+    image: schema/multitenancy:dev
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    command: sh -c "./mvnw clean compile spring-boot:run"
+    ports:
+      - 5005:5005
+      - 8080:8080
+    restart: on-failure:3
+    user: nonroot
+    volumes:
+      - ./:/app
+      - ~/.m2:/home/nonroot/.m2
+
+  db:
+    image: postgres:12.1
+    environment:
+        - POSTGRES_PASSWORD=multitenancy
+        - POSTGRES_USER=multitenancy
+        - POSTGRES_DB=multitenancy
+    ports:
+        - 5432:5432
+    restart: on-failure:3
+    
